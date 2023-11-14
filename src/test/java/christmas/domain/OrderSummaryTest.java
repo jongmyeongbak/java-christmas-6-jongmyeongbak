@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class OrderSummaryTest {
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+
     private Order order;
     private DiscountCalculator discountCalculator;
     private OrderSummary orderSummary;
@@ -31,7 +33,7 @@ class OrderSummaryTest {
     void testTotalOrderAmount() {
         when(order.calculateTotalAmount()).thenReturn(12000);
         String summary = orderSummary.generateSummary(testDate, specialDays);
-        assertTrue(summary.contains("<할인 전 총주문 금액>\n12,000원"));
+        assertTrue(summary.contains("<할인 전 총주문 금액>" + LINE_SEPARATOR + "12,000원"));
     }
 
     @Test
@@ -56,7 +58,7 @@ class OrderSummaryTest {
         when(discountCalculator.calculateGiftEvent(order)).thenReturn(Optional.of(giftMenu));
 
         String summary = orderSummary.generateSummary(testDate, specialDays);
-        assertTrue(summary.contains("<증정 메뉴>\n샴페인 1개"));
+        assertTrue(summary.contains("<증정 메뉴>" + LINE_SEPARATOR + "샴페인 1개"));
     }
 
     @Test
@@ -66,15 +68,15 @@ class OrderSummaryTest {
         when(discountCalculator.calculateWeekdayDiscount(testDate, order)).thenReturn(500);
 
         String summary = orderSummary.generateSummary(testDate, specialDays);
-        assertTrue(summary.contains("<할인 후 예상 결제 금액>\n18,500원"));
+        assertTrue(summary.contains("<할인 후 예상 결제 금액>" + LINE_SEPARATOR + "18,500원"));
     }
 
     @Test
     void testEventBadgeAssignment() {
-        when(order.calculateTotalAmount()).thenReturn(10000);
-        when(discountCalculator.calculateSpecialDiscount(testDate, specialDays)).thenReturn(500);
+        when(order.calculateTotalAmount()).thenReturn(60000);
+        when(discountCalculator.calculateWeekdayDiscount(testDate, order)).thenReturn(2023 * 5);
 
         String summary = orderSummary.generateSummary(testDate, specialDays);
-        assertTrue(summary.contains("<12월 이벤트 배지>\n트리"));
+        assertTrue(summary.contains("<12월 이벤트 배지>" + LINE_SEPARATOR + "트리"));
     }
 }

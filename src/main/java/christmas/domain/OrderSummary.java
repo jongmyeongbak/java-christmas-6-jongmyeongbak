@@ -11,6 +11,7 @@ import java.util.StringJoiner;
 public class OrderSummary {
     private static final String CURRENCY = "원";
     private static final int EVENT_THRESHOLD_AMOUNT = 10000;
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
     private final Order order;
     private final DiscountCalculator discountCalculator;
@@ -53,23 +54,25 @@ public class OrderSummary {
 
     private String buildEventPreview(final int totalAmount, final Map<DiscountType, Integer> discounts,
                                      final Optional<Menu> gift) {
-        final StringJoiner benefitDetailMenu = makeBenefitDetailMenu(discounts, gift);
+        final StringJoiner benefitDetailMenu = makeBenefitDetail(discounts, gift);
 
-        final int finalAmount = totalAmount - getTotalDiscount(discounts);
-        final int totalBenefit = totalAmount + gift.map(Menu::getPrice).orElse(0);
+        final int totalDiscount = getTotalDiscount(discounts);
+        final int finalAmount = totalAmount - totalDiscount;
+        final int totalBenefit = totalDiscount + gift.map(Menu::getPrice).orElse(0);
         final StringBuilder sb = new StringBuilder();
         appendOrderMenu(sb);
         appendMenu(sb, "할인 전 총주문 금액", totalAmount);
         appendGiftMenu(sb, gift);
-        sb.append(benefitDetailMenu);
+        sb.append(LINE_SEPARATOR).append(LINE_SEPARATOR).append("<혜택 내역>").append(LINE_SEPARATOR)
+                .append(benefitDetailMenu);
         appendMenu(sb, "총혜택 금액", -totalBenefit);
         appendMenu(sb, "할인 후 예상 결제 금액", finalAmount);
         appendEventBadge(sb, totalBenefit);
         return sb.toString();
     }
 
-    private StringJoiner makeBenefitDetailMenu(final Map<DiscountType, Integer> discounts, final Optional<Menu> gift) {
-        StringJoiner benefitDetail = new StringJoiner("\n", "\n\n<혜택 내역>\n", "");
+    private StringJoiner makeBenefitDetail(final Map<DiscountType, Integer> discounts, final Optional<Menu> gift) {
+        StringJoiner benefitDetail = new StringJoiner(LINE_SEPARATOR);
         discounts.forEach((type, amount) ->
                 addDiscountContent(benefitDetail, type.getDisplayName(), amount)
         );
@@ -93,18 +96,20 @@ public class OrderSummary {
     }
 
     private void appendOrderMenu(final StringBuilder sb) {
-        sb.append("\n\n<주문 메뉴>");
+        sb.append(LINE_SEPARATOR).append("<주문 메뉴>");
         order.getOrderItems()
-                .forEach((menu, quantity) -> sb.append('\n').append(menu).append(quantity));
+                .forEach((menu, quantity) -> sb.append(LINE_SEPARATOR)
+                        .append(menu.getName()).append(' ').append(quantity).append("개"));
     }
 
     private void appendMenu(final StringBuilder sb, final String menuName, final int amount) {
         String formattedAmount = String.format("%,d", amount);
-        sb.append("\n\n<").append(menuName).append(">\n").append(formattedAmount).append(CURRENCY);
+        sb.append(LINE_SEPARATOR).append(LINE_SEPARATOR).append('<').append(menuName).append('>')
+                .append(LINE_SEPARATOR).append(formattedAmount).append(CURRENCY);
     }
 
     private void appendGiftMenu(final StringBuilder sb, final Optional<Menu> gift) {
-        sb.append("\n\n<증정 메뉴>\n");
+        sb.append(LINE_SEPARATOR).append(LINE_SEPARATOR).append("<증정 메뉴>").append(LINE_SEPARATOR);
         if (gift.isEmpty()) {
             sb.append("없음");
             return;
@@ -114,7 +119,7 @@ public class OrderSummary {
     }
 
     private void appendEventBadge(final StringBuilder sb, final int totalBenefit) {
-        sb.append("\n\n<12월 이벤트 배지>\n");
+        sb.append(LINE_SEPARATOR).append(LINE_SEPARATOR).append("<12월 이벤트 배지>").append(LINE_SEPARATOR);
         String badge = "없음";
 
         if (totalBenefit >= 20000) {
