@@ -2,6 +2,7 @@ package christmas.domain;
 
 import static christmas.util.ErrorMessages.INVALID_ORDER;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -92,5 +93,9 @@ public class Order {
         return orderItems.entrySet().stream()
                 .mapToInt(entry -> entry.getKey().getPrice() * entry.getValue())
                 .sum();
+    }
+
+    public Map<Menu, Integer> getOrderItems() {
+        return Collections.unmodifiableMap(orderItems);
     }
 }
