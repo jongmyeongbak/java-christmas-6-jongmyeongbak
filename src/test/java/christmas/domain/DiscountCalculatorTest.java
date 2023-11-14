@@ -1,5 +1,6 @@
 package christmas.domain;
 
+import static christmas.util.Constants.STAR_DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,5 +48,20 @@ class DiscountCalculatorTest {
 
         assertThat(discountCalculator.calculateWeekendDiscount(LocalDate.of(2023, 12, weekend), mockOrder))
                 .isEqualTo(2 * WEEKEND_DISCOUNT);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {25, 31})
+    void calculateSpecialDiscount_OnSpecialDays_ProvidesDiscount(int starDay) {
+        assertThat(discountCalculator.calculateSpecialDiscount(LocalDate.of(2023, 12, starDay), STAR_DAYS))
+                .isEqualTo(1000);
+    }
+
+    @Test
+    void calculateSpecialDiscount_NotOnSpecialDays_NoDiscount() {
+        assertThat(discountCalculator.calculateSpecialDiscount(
+                LocalDate.of(2023, 12, 1), STAR_DAYS
+        ))
+                .isZero();
     }
 }

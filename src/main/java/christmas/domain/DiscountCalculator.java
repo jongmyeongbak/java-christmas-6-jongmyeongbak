@@ -2,6 +2,7 @@ package christmas.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Set;
 
 public class DiscountCalculator {
     private static final int D_DAY = 25;
@@ -9,6 +10,7 @@ public class DiscountCalculator {
     private static final int DAILY_INCREMENT = 100;
     private static final int WEEKDAY_DISCOUNT_PER_MENU = 2023;
     private static final int WEEKEND_DISCOUNT_PER_MENU = 2023;
+    private static final int SPECIAL_DISCOUNT = 1000;
 
     public int calculateDDayDiscount(final LocalDate date) {
         int dayOfMonth = date.getDayOfMonth();
@@ -39,5 +41,12 @@ public class DiscountCalculator {
     private boolean isWeekend(final LocalDate date) {
         DayOfWeek day = date.getDayOfWeek();
         return day == DayOfWeek.FRIDAY || day == DayOfWeek.SATURDAY;
+    }
+
+    public int calculateSpecialDiscount(final LocalDate date, final Set<LocalDate> specialDays) {
+        if (specialDays.contains(date)) {
+            return SPECIAL_DISCOUNT;
+        }
+        return 0;
     }
 }
