@@ -80,4 +80,11 @@ public class Order {
             throw new IllegalArgumentException(INVALID_ORDER);
         }
     }
+
+    public int countTotalQuantityForCategory(final Menu.Category category) {
+        return orderItems.entrySet().stream()
+                .filter(entry -> entry.getKey().getCategory() == category)
+                .mapToInt(Map.Entry::getValue)
+                .sum();
+    }
 }

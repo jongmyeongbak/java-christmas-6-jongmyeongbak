@@ -1,9 +1,11 @@
 package christmas.domain;
 
 import static christmas.util.ErrorMessages.INVALID_ORDER;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import christmas.domain.Menu.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -61,5 +63,15 @@ class OrderTest {
         assertThatThrownBy(() -> new Order(beveragesOnly))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(INVALID_ORDER);
+    }
+
+    @Test
+    void countTotalQuantityForCategory_WithValidCategory_ReturnsCorrectQuantity() {
+        assertThat(order.countTotalQuantityForCategory(Category.APPETIZER)).isEqualTo(2);
+    }
+
+    @Test
+    void countTotalQuantityForCategory_WithNoItemsOfCategory_ReturnsZero() {
+        assertThat(order.countTotalQuantityForCategory(Menu.Category.MAIN)).isZero();
     }
 }
