@@ -64,4 +64,22 @@ class DiscountCalculatorTest {
         ))
                 .isZero();
     }
+
+    @Test
+    void calculateGiftEvent_AboveThreshold_ReturnsGift() {
+        Order mockOrder = mock(Order.class);
+        when(mockOrder.calculateTotalAmount()).thenReturn(120000);
+
+        assertThat(discountCalculator.calculateGiftEvent(mockOrder))
+                .contains(Menu.CHAMPAGNE);
+    }
+
+    @Test
+    void calculateGiftEvent_UnderThreshold_NoGift() {
+        Order mockOrder = mock(Order.class);
+        when(mockOrder.calculateTotalAmount()).thenReturn(100000);
+
+        assertThat(discountCalculator.calculateGiftEvent(mockOrder))
+                .isEmpty();
+    }
 }

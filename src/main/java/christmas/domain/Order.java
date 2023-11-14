@@ -87,4 +87,10 @@ public class Order {
                 .mapToInt(Map.Entry::getValue)
                 .sum();
     }
+
+    public int calculateTotalAmount() {
+        return orderItems.entrySet().stream()
+                .mapToInt(entry -> entry.getKey().getPrice() * entry.getValue())
+                .sum();
+    }
 }

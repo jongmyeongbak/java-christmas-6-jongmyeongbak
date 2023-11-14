@@ -2,6 +2,7 @@ package christmas.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 
 public class DiscountCalculator {
@@ -11,6 +12,8 @@ public class DiscountCalculator {
     private static final int WEEKDAY_DISCOUNT_PER_MENU = 2023;
     private static final int WEEKEND_DISCOUNT_PER_MENU = 2023;
     private static final int SPECIAL_DISCOUNT = 1000;
+    private static final int GIFT_THRESHOLD_AMOUNT = 120000;
+    private static final Menu GIFT_ITEM = Menu.CHAMPAGNE;
 
     public int calculateDDayDiscount(final LocalDate date) {
         int dayOfMonth = date.getDayOfMonth();
@@ -48,5 +51,13 @@ public class DiscountCalculator {
             return SPECIAL_DISCOUNT;
         }
         return 0;
+    }
+
+    public Optional<Menu> calculateGiftEvent(final Order order) {
+        int totalAmount = order.calculateTotalAmount();
+        if (totalAmount >= GIFT_THRESHOLD_AMOUNT) {
+            return Optional.of(GIFT_ITEM);
+        }
+        return Optional.empty();
     }
 }

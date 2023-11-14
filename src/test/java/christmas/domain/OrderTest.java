@@ -74,4 +74,12 @@ class OrderTest {
     void countTotalQuantityForCategory_WithNoItemsOfCategory_ReturnsZero() {
         assertThat(order.countTotalQuantityForCategory(Menu.Category.MAIN)).isZero();
     }
+
+    @Test
+    void calculateTotalAmount_WithMultipleItems_ReturnsCorrectTotal() {
+        order = new Order("양송이수프-2,바비큐립-1,아이스크림-3");
+
+        int expectedTotal = (6000 * 2) + (54000 * 1) + (5000 * 3);
+        assertThat(order.calculateTotalAmount()).isEqualTo(expectedTotal);
+    }
 }
